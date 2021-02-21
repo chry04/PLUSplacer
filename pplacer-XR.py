@@ -134,7 +134,7 @@ if __name__ == "__main__":
     jplace["fields"] = ["distal_length", "edge_num", "like_weight_ratio", \
             "likelihood", "pendant_length"]
 
-    output = open(output+"/pplacer++.jplace", 'w')
+    output = open(output+"/pplacer-XR.jplace", 'w')
     json.dump(jplace, output, sort_keys=True , indent=4)
     output.close()
     

@@ -18,7 +18,7 @@ Input & Output Specification
 ----------------------------------
 The input parameters are as follows:
 
-    model_name : DNA substitution model such as GTR or JC69
+    model_name : DNA substitution model such as GTR for nucleotides
     statistics_file : statistics file produced by RAxML containing the substitution rates
     backbone_tree : refernce tree file path (in newick format) (parameter T)
     output_directory : directory to where output file pplacer-XR.jplace is written

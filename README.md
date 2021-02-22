@@ -28,6 +28,6 @@ The input parameters are as follows:
     random_number : arbitrary index of the tmp file created to contain the Newick subtree and its corresponding MSA
 
 Usage:
-Please run from the directory containing pplacer, available at https://github.com/matsen/pplacer.
+Please run from a directory containing pplacer, available at https://github.com/matsen/pplacer.
 
     python3 pplacer-XR.py model_name statistic_file backbone_tree output_directory alignment queries subtree_size random_number

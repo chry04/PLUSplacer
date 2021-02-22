@@ -2,7 +2,7 @@
 ------------------------
 Summary
 ------------------------
-pplacer-XR (eXtra Range) is an extension for the likelihood-based phylogenetic placement method pplacer, which allows pplacer to run on ultra-large reference trees. It is a python program that can be run on **Linux and MacOS**
+pplacer-XR (eXtra Range) is an extension for the maximum likelihood phylogenetic placement method pplacer, which allows pplacer to run on ultra-large reference trees. It is a python program that can be run on **Linux and MacOS**
 
 
 ------------------------

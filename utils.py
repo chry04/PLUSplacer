@@ -2,9 +2,21 @@ from dendropy import *
 import numpy as np
 import heapq
 
-#separete the query and ref sequence from the alignment file
+
 
 def read_data(aln):
+    """ Load the query and reference sequence from the alignment file
+    
+    Parameters
+    ----------
+    aln : multiple sequence alignment containing reference taxa and query sequence
+    
+    Returns
+    -------
+    dictionary containing sequences with taxon label keys
+    
+    """
+    
     f = open(aln)
     result = dict()
 
@@ -29,12 +41,22 @@ def read_data(aln):
     return result
 
 def seperate(aln_dict, query):
+    """ Separate the query sequences from the reference sequences
+    
+    Parameters
+    ----------
+    aln_dict : Sequence dictionary with taxon label keys
+    
+    Returns
+    -------
+    separate dictionaries containing query sequences and referece sequences with taxon label keys
+    
+    """
+    
     f = open(query)
     q_name = set()
     for line in f:
         q_name.add(line[:-1])
-
-    #print(q_name)
 
     ref = dict()
     query = dict()
@@ -48,14 +70,28 @@ def seperate(aln_dict, query):
     return ref, query
 
 def hamming(seq1, seq2):
+    """ Returns hamming distance between two sequences
+    
+    Parameters
+    ----------
+    seq1 : query sequence
+    seq2 : reference sequence
+    
+    Returns
+    -------
+    integer hamming distance between query sequence and reference sequence
+    
+    """
     return len([1 for i in range(len(seq1)) if seq1[i] != seq2[i]])
 
-'''
-output n dataset with
-each dataset have a aln(alignment for both query and reference),
-query.txt(taxon name for query)
-'''
 def process_backbone_tree(aln, output_folder, n_ref, n_query, n_set):
+    """ Not used ~ Samples alignment for dataset creation
+    and creates fasta file where sites containing 95% gaps are removed.
+    
+    output n dataset with
+    each dataset have a aln(alignment for both query and reference),
+    query.txt(taxon name for query)
+    """
     aln_dict = read_data(aln)
     n_row = len(aln_dict)
     n_col = len(aln_dict.key[0])
@@ -98,8 +134,19 @@ def process_backbone_tree(aln, output_folder, n_ref, n_query, n_set):
         f.close()
         
 
-
 def find_y(x, ref):
+     """ Returns leaf label for closest sister taxon l
+    
+    Parameters
+    ----------
+    x : aligned query sequence
+    ref : reference multiple sequence alignment dictionary 
+    
+    Returns
+    -------
+    leaf label for taxon with smallest hamming distacne to query sequence
+    
+    """
     low = len(x)
     y = ""
     for name, seq in ref.items():
@@ -111,6 +158,23 @@ def find_y(x, ref):
 
 
 def find_closest(x, visited, y=None):
+    """ Returns leaf label for closest leaf to the node x through path not travelling through visited.
+    If y is populated returns path from x to y not travelling through nodes in visited.
+    
+    Parameters
+    ----------
+    x : dendropy node object
+    visited : list containing dendropy node objects 
+    y : dendropy node object
+    
+    Returns
+    -------
+    If y == None : dendropy node object of closest leaf y to the node x through path not travelling through nodes in visited, 
+                   list containing dendropy node objects on path to that leaf y from node x
+    If y != None : dendropy node object y, 
+                   list containing dendropy node objects on path from node x to leaf y not travelling through nodes in visited
+    
+    """
     queue = []
     counter = 1
     visited.add(x)
@@ -165,6 +229,19 @@ def find_closest(x, visited, y=None):
 
 
 def subtree_nodes(tree, y, n):
+    """ Returns list of length n of taxon dendropy node objects (leaves) closest to sister taxon
+    
+    Parameters
+    ----------
+    tree : dendropy tree object
+    y : taxon label for closest sister taxon
+    n = number of taxa contained in subtree
+    
+    Returns
+    -------
+    list of dendropy node objects corresponding to leaves in the subtree
+    
+    """
     leaf_y = tree.find_node_with_taxon_label(y)
     queue = [(0, 0, leaf_y.parent_node)]
     
@@ -196,6 +273,20 @@ def subtree_nodes(tree, y, n):
     return result
 
 def subtree_nodes_with_edge_length(tree, y, n):
+    """ Not used ~ Returns list of length n of taxon dendropy node objects (leaves) closest to sister taxon
+    
+    Parameters
+    ----------
+    tree : dendropy tree object
+    y : taxon label for closest sister taxon
+    n = number of taxa contained in subtree
+    
+    Returns
+    -------
+    list of dendropy node objects corresponding to leaves in the subtree
+    
+    """
+
     leaf_y = tree.find_node_with_taxon_label(y)
     queue = [(leaf_y.edge_length, 0, leaf_y.parent_node)]
     
@@ -227,11 +318,25 @@ def subtree_nodes_with_edge_length(tree, y, n):
     return result
 
 def edge_labeling(l):
+    """ Returns jplace tokens attached to edge lengths
+      
+    Parameters
+    ----------
+    l : dendropy edge object
+    
+    Returns
+    -------
+    string containing jplace tokens attached to edge lengths
+    """
     return str(l.length)+"{"+str(l.label)+"}"
 
 
 
 def compareTreesFromPath(treePath1, treePath2):
+    """
+    This code was written by Erin Molloy and was borrowed from :
+    https://github.com/ekmolloy/njmerge/blob/master/python/compare_trees.py
+    """
     print("Comparing {} with {}".format(treePath1, treePath2))
 
     tax = TaxonNamespace()
@@ -254,6 +359,10 @@ def compareTreesFromPath(treePath1, treePath2):
 
 
 def compareDendropyTrees(tr1, tr2):
+    """
+    This code was written by Erin Molloy and was borrowed from :
+    https://github.com/ekmolloy/njmerge/blob/master/python/compare_trees.py
+    """
     from dendropy.calculate.treecompare \
         import false_positives_and_negatives
 
@@ -285,6 +394,17 @@ def compareDendropyTrees(tr1, tr2):
     return (nl, ei1, ei2, fp, fn, rf)
 
 def writePhylip(alignment, filePath, taxa = None):
+    """  writes file in Phylip format
+    This code was provided by Vladimir Smirnov in CS 581 at UIUC 
+      
+    Parameters
+    ----------
+    alignment : alignment dictionary where key is taxon name and value is object with "seq" attribute
+    filePath : path for output Phylip file 
+    taxa : taxa to be included
+    
+    """
+    
     maxChars = 0
     lines = []
     for tag in alignment:

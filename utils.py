@@ -93,7 +93,7 @@ def hamming(seq1, seq2):
 
 
 def find_y(x,ref):
-     """ Returns leaf label for closest sister taxon l (no longer used)
+    """ Returns leaf label for closest sister taxon l (no longer used)
     
     Parameters
     ----------
@@ -169,16 +169,16 @@ def set_fragment_indicies(x):
     list of start index and end index with the first and last non gap character
     
     """
-        e = len(x)
-        ei = e
-        si = 0
-        for i in range(ei): 
-          if x[i] == '-' and si == i:
-              si = i + 1
-          if x[e - i - 1] == '-' and ei == e - i:
-              ei = e - i - 1
-          if ei == si:
-              break
+    e = len(x)
+    ei = e
+    si = 0
+    for i in range(ei): 
+        if x[i] == '-' and si == i:
+            si = i + 1
+        if x[e - i - 1] == '-' and ei == e - i:
+            ei = e - i - 1
+        if ei == si:
+            break
         return [si, ei] 
 
 def find_closest(x, visited, y=None):

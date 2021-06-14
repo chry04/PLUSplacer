@@ -3,7 +3,7 @@ This file is contains code to be used alongside pplacer as described in the upco
 
 Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-XR.
 
-Copyright (c) 2021 pplacer-XR Developers
+Copyright (c) 2021 EPA-ng-XR Developers
 Yirong Cai <yirongc2@illinois.edu>
 Eleanor Wedell <ewedell2@illinois.edu>
 All rights reserved.
@@ -11,11 +11,12 @@ All rights reserved.
 Licence: MIT Licence, 
 see https://opensource.org/licenses/MIT
 
-pplacer can be found at: 
-https://github.com/matsen/pplacer
+EPA-ng can be found at: 
+https://github.com/Pbdas/epa-ng
 
-***must be run from the directory containing pplacer***
+***must be run from the directory containing EPA-ng***
 """
+
 
 import sys
 import os
@@ -38,7 +39,7 @@ def main(args):
     q_aln = args.qalignment
     model = args.model
     info = args.info
-
+    
     # read msa and reference tree
     t0 = time.perf_counter()
     tree = treeswift.read_tree_newick(tree_path)
@@ -51,7 +52,7 @@ def main(args):
     else:
         aln_dict = utils.read_data(aln)
         ref_dict, q_dict = utils.seperate(aln_dict, leaf_dict)
-    
+
     jplace = dict()
     placements = []
 
@@ -74,9 +75,16 @@ def main(args):
     # place each query sequence
     for name, seq in q_dict.items():
 
-        tmp_tree = "tmp{}/tree_".format(run)+name
-        tmp_aln = "tmp{}/aln".format(run)+name+".fa"
-        tmp_output = "tmp{}/".format(run)+name+".jplace"
+        tmp_tree = "tmp{}/tree_".format(run) + name
+        tmp_aln = "tmp{}/aln".format(run) + name + ".fa"
+        tmp_qaln = "tmp{}/qaln".format(run) + name + "q.fa"
+        tmp_output = "tmp{}/{}".format(run, name) + "/epa_result.jplace"
+        tmp_dir = "tmp{}/{}".format(run, name)
+        try:
+            os.mkdir(tmp_dir)
+        except OSError as error:
+            pass
+
 
         # finds closest sister taxon and subtree leaves
         if subtree_flag == 'h':
@@ -97,9 +105,10 @@ def main(args):
 
         # write subtree MSA and aligned query sequence to tmp file
         f = open(tmp_aln, "w")
-        f.write(">"+name)
-        f.write("\n")
-        f.write(seq+"\n")
+        fq = open(tmp_qaln, "w")
+        fq.write(">"+name)
+        fq.write("\n")
+        fq.write(seq+"\n")
         for label in labels:
             label_list = label.split('%%',1)
             label = label_list[0]
@@ -108,6 +117,8 @@ def main(args):
             f.write("\n")
 
         f.close()
+        fq.close()
+        
 
         subtree = tree.extract_tree_with(labels)
 
@@ -118,9 +129,9 @@ def main(args):
 
         print ('{} seconds extracting subtree'.format(time.perf_counter() - t0))
         # run EPA-ng-XR from directory containing EPA-ng binaries
-        os.system("./pplacer -m {} -s {} -t {} -o {} {}".format(model, info, tmp_tree, tmp_output, tmp_aln))
+        os.system("./epa-ng -m {} -t {} -w {} -s {} -q {} --redo -T 16".format(info, tmp_tree, tmp_dir, tmp_aln, tmp_qaln))
 
-        print ('{} seconds running pplacer'.format(time.perf_counter() - t0))
+        print ('{} seconds running epa-ng'.format(time.perf_counter() - t0))
 
         # load the jplace file and find placements in the original backbone tree
         place_file = open(tmp_output, 'r')
@@ -132,8 +143,8 @@ def main(args):
 
             tmp_place = place_json["placements"][0]
             for i in range(len(tmp_place["p"])):
-                edge_num = tmp_place["p"][i][1] # edge number in subtree
-                edge_distal = tmp_place["p"][i][0] # distal length from parent node
+                edge_num = tmp_place["p"][i][0] # edge number in subtree
+                edge_distal = tmp_place["p"][i][3] # distal length from parent node
 
                 # find placement edge according to edge number
                 right_n = edge_dict[str(edge_num)]
@@ -178,12 +189,13 @@ def main(args):
     jplace["fields"] = ["distal_length", "edge_num", "like_weight_ratio", \
             "likelihood", "pendant_length"]
 
-    
-    output = open('{}/{}.jplace'.format(output,outFile), 'w') 
+
+    output = open('{}/{}.jplace'.format(output,outFile), 'w')
     json.dump(jplace, output, sort_keys=True , indent=4)
     output.close()
     print ('{} seconds building jplace'.format(time.perf_counter() - t0))
     shutil.rmtree("tmp{}".format(run))
+    
     
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -209,7 +221,7 @@ def parseArgs():
 
     parser.add_argument("-b", "--subtreesize", type=int,
                         help="Integer size of the subtree",
-                        required=False, default=2000)
+                        required=False, default=10000)
     
     parser.add_argument("-s", "--subtreetype", type=str,
                         help="d (default) for edge weighted distances, n for node distances, h for hamming distances",

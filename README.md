@@ -14,7 +14,7 @@ They are both python programs that can be run on **Linux and MacOS**
 Requirements
 ------------------------
 1. Python: Version >= 3.0
-2. DendroPy: Version 4.4.0
+2. Treeswift
 3. pplacer: Version 1.1.alpha19 (for pplacer-XR)
    or 
    EPA-ng: Version 0.3.8 (for EPA-ng-XR)

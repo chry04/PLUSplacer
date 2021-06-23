@@ -179,7 +179,7 @@ def set_fragment_indicies(x):
             ei = e - i - 1
         if ei == si:
             break
-        return [si, ei] 
+    return [si, ei] 
 
 def find_closest(x, visited, y=None):
     """ Returns leaf label for closest leaf to the node x through path not travelling through visited.

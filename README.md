@@ -27,7 +27,7 @@ The input parameters for pplacer-XR and EPA-ng-XR are as follows:
     
     Required arguments: 
     -i, --info : statistics file path produced by RAxML version 7 for pplacer-XR or RAxML-ng for EPA-ng-XR containing the substitution rates
-    -t, --tree : refernce tree file path (in newick format) (parameter T)
+    -t, --tree : reference tree file path (in newick format) (parameter T)
     -d, --outdir : directory to where output file pplacer-XR.jplace is written
     -a, --alignment : fasta format file path containing the multiple sequence alignment (MSA) of reference and query sequences (parameter A) (query sequences optional if aligned queries are in given with -q option in a separate file)
 

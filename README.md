@@ -3,9 +3,9 @@
 ------------------------
 Summary
 ------------------------
-pplacer-XR (eXtra Range) is an extension for the maximum likelihood phylogenetic placement method pplacer, which allows pplacer to run on ultra-large reference trees. 
+pplacer-SCAMPP is an extension for the maximum likelihood phylogenetic placement method pplacer, which allows pplacer to run on ultra-large reference trees. 
 
-Similarly EPA-ng-XR (eXtra Range) is an extension of EPA-ng, allowing it to run on ultra-large reference trees.
+Similarly EPA-ng-SCAMPP is an extension of EPA-ng, allowing it to run on ultra-large reference trees.
 
 They are both python programs that can be run on **Linux and MacOS**
 
@@ -15,20 +15,20 @@ Requirements
 ------------------------
 1. Python: Version >= 3.0
 2. Treeswift
-3. pplacer: Version 1.1.alpha19 (for pplacer-XR)
+3. pplacer: Version 1.1.alpha19 (for pplacer-SCAMPP)
    or 
-   EPA-ng: Version 0.3.8 (for EPA-ng-XR)
+   EPA-ng: Version 0.3.8 (for EPA-ng-SCAMPP)
 
 
 ----------------------------------
 Input & Output Specification
 ----------------------------------
-The input parameters for pplacer-XR and EPA-ng-XR are as follows:
+The input parameters for pplacer-SCAMPP and EPA-ng-SCAMPP are as follows:
     
     Required arguments: 
-    -i, --info : statistics file path produced by RAxML version 7 for pplacer-XR or RAxML-ng for EPA-ng-XR containing the substitution rates
+    -i, --info : statistics file path produced by RAxML version 7 for pplacer-SCAMPP or RAxML-ng for EPA-ng-SCAMPP containing the substitution rates
     -t, --tree : reference tree file path (in newick format) (parameter T)
-    -d, --outdir : directory to where output file pplacer-XR.jplace is written
+    -d, --outdir : directory to where output file pplacer-SCAMPP.jplace is written
     -a, --alignment : fasta format file path containing the multiple sequence alignment (MSA) of reference and query sequences (parameter A) (query sequences optional if aligned queries are in given with -q option in a separate file)
 
     Optional arguments:
@@ -41,8 +41,8 @@ The input parameters for pplacer-XR and EPA-ng-XR are as follows:
     
 
 Usage:
-Please run from a directory containing the respective phylogenetic placement method. This would be pplacer (available at https://github.com/matsen/pplacer) for pplacer-XR or EPA-ng (available at https://github.com/Pbdas/epa-ng) for EPA-ng-XR.
+Please run from a directory containing the respective phylogenetic placement method. This would be pplacer (available at https://github.com/matsen/pplacer) for pplacer-SCAMPP or EPA-ng (available at https://github.com/Pbdas/epa-ng) for EPA-ng-SCAMPP.
 
-python3 pplacer-XR.py -i INFO -t TREE -d OUTDIR -a ALIGNMENT
+python3 pplacer-SCAMPP.py -i INFO -t TREE -d OUTDIR -a ALIGNMENT
 
-python3 EPA-ng-XR.py -i INFO -t TREE -d OUTDIR -a ALIGNMENT    
+python3 EPA-ng-SCAMPP.py -i INFO -t TREE -d OUTDIR -a ALIGNMENT    

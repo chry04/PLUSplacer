@@ -1,9 +1,9 @@
 """
 This file is contains code to be used alongside pplacer as described in the upcoming ALCOB conference paper :
 
-Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-XR.
+Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-SCAMPP.
 
-Copyright (c) 2021 pplacer-XR Developers
+Copyright (c) 2021 pplacer-SCAMPP Developers
 Yirong Cai <yirongc2@illinois.edu>
 Eleanor Wedell <ewedell2@illinois.edu>
 All rights reserved.
@@ -117,7 +117,7 @@ def main(args):
         subtree.write_tree_newick(tmp_tree, hide_rooted_prefix=True)
 
         print ('{} seconds extracting subtree'.format(time.perf_counter() - t0))
-        # run EPA-ng-XR from directory containing EPA-ng binaries
+        # run pplacer from directory containing pplacer binaries
         os.system("./pplacer -m {} -s {} -t {} -o {} {}".format(model, info, tmp_tree, tmp_output, tmp_aln))
 
         print ('{} seconds running pplacer'.format(time.perf_counter() - t0))
@@ -201,7 +201,7 @@ def parseArgs():
                         help="Path for query and reference sequence alignment in fasta format", required=True, default=None)
 
     parser.add_argument("-o", "--output", type=str,
-                        help="Output file name", required=False, default="pplacer-XR")
+                        help="Output file name", required=False, default="pplacer-SCAMPP")
     
     parser.add_argument("-m", "--model", type=str,
                         help="Model used for edge distances",

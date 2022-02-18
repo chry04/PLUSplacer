@@ -1,7 +1,7 @@
 """
 This file is contains code to be used alongside pplacer as described in the upcoming ALCOB conference paper :
 
-Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-SCAMPP.
+Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-XR.
 
 Copyright (c) 2021 pplacer-SCAMPP Developers
 Yirong Cai <yirongc2@illinois.edu>

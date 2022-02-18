@@ -3,7 +3,7 @@ This file is contains code to be used alongside pplacer as described in the upco
 
 Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-XR.
 
-Copyright (c) 2021 EPA-ng-XR Developers
+Copyright (c) 2021 EPA-ng-SCAMPP Developers
 Yirong Cai <yirongc2@illinois.edu>
 Eleanor Wedell <ewedell2@illinois.edu>
 All rights reserved.
@@ -128,7 +128,7 @@ def main(args):
         subtree.write_tree_newick(tmp_tree, hide_rooted_prefix=True)
 
         print ('{} seconds extracting subtree'.format(time.perf_counter() - t0))
-        # run EPA-ng-XR from directory containing EPA-ng binaries
+        # run EPA-ng-SCAMPP from directory containing EPA-ng binaries
         os.system("./epa-ng -m {} -t {} -w {} -s {} -q {} --redo -T 16".format(info, tmp_tree, tmp_dir, tmp_aln, tmp_qaln))
 
         print ('{} seconds running epa-ng'.format(time.perf_counter() - t0))
@@ -213,7 +213,7 @@ def parseArgs():
                         help="Path for query and reference sequence alignment in fasta format", required=True, default=None)
 
     parser.add_argument("-o", "--output", type=str,
-                        help="Output file name", required=False, default="pplacer-XR")
+                        help="Output file name", required=False, default="pplacer-SCAMPP")
     
     parser.add_argument("-m", "--model", type=str,
                         help="Model used for edge distances",

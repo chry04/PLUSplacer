@@ -135,7 +135,7 @@ def find_closest_hamming(x, ref, n, fragment_flag):
 
     counter = 0
     
-    if fragment_flag:
+    if fragment_flag == 'True':
         [si, ei] = set_fragment_indicies(x)
     else:
         [si, ei] = [0, len(x)]

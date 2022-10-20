@@ -1,19 +1,14 @@
 """
 This file is contains code to be used alongside pplacer as described in the upcoming ALCOB conference paper :
-
 Wedell, E., Cai, Y., Warnow, T. (2021). Scalable and Accurate Phylogenetic Placementusing pplacer-XR.
-
 Copyright (c) 2021 pplacer-SCAMPP Developers
 Yirong Cai <yirongc2@illinois.edu>
 Eleanor Wedell <ewedell2@illinois.edu>
 All rights reserved.
-
 Licence: MIT Licence, 
 see https://opensource.org/licenses/MIT
-
 pplacer can be found at: 
 https://github.com/matsen/pplacer
-
 ***must be run from the directory containing pplacer***
 """
 
@@ -34,7 +29,7 @@ def main(args):
     n = args.subtreesize
     run = args.tmpfilenbr
     subtree_flag = args.subtreetype
-    frag_flag = args.fragmentflag
+    fragment_flag = args.fragmentflag
     q_aln = args.qalignment
     model = args.model
     info = args.info
@@ -70,6 +65,50 @@ def main(args):
     except OSError as error:
     	pass
 
+    # find the nearest taxon for each query
+    tmp_output = "tmp{}/".format(run) + "/closest.txt"
+    
+    if q_aln == "":
+        q_aln = "tmp{}/".format(run) + "qaln.fa"
+        f = open(q_aln, "w")
+        for label, seq in q_dict.items():
+            f.write(">"+label+"\n")
+            f.write(seq+"\n")
+        f.close()
+        
+        aln = "tmp{}/".format(run) + "aln.fa"
+        f = open(aln, "w")
+        for label, seq in ref_dict.items():
+            f.write(">"+label+"\n")
+            f.write(seq+"\n")
+        f.close()
+    
+    if subtree_flag == 'h':
+        nbr_closest = n
+    else:
+        nbr_closest = 1
+        
+    if fragment_flag:
+        os.system("./fragment_hamming {} {} {} {} {} {}".format(aln, len(ref_dict), q_aln, len(q_dict), tmp_output, nbr_closest))
+    else:
+        os.system("./hamming {} {} {} {} {} {}".format(aln, len(ref_dict), q_aln, len(q_dict), tmp_output, nbr_closest))
+        
+    print ('{} seconds finding closest leaves'.format(time.perf_counter() - t0))
+
+    query_ham_dict = dict()
+    f = open(tmp_output)
+    for line in f: 
+        line = line.strip()
+        y = line.split(',')
+        name = y.pop(0)
+        for idx, taxon in enumerate(y):
+            y[idx] = taxon.split(':')[0]
+        query_ham_dict[name] = y
+    f.close()
+    
+    print ('{} seconds processing closest leaves'.format(time.perf_counter() - t0))
+
+
 
     # place each query sequence
     for name, seq in q_dict.items():
@@ -77,18 +116,14 @@ def main(args):
         tmp_tree = "tmp{}/tree_".format(run)+name
         tmp_aln = "tmp{}/aln".format(run)+name+".fa"
         tmp_output = "tmp{}/".format(run)+name+".jplace"
-
+        
+        y = query_ham_dict[name]
         # finds closest sister taxon and subtree leaves
         if subtree_flag == 'h':
-            y = utils.find_closest_hamming(seq, ref_dict, n, frag_flag)
             labels = []
             for taxon in y:
                labels.append(leaf_dict[taxon].get_label())
-            print('Closest sister taxon found: {}'.format(y[0]))
         else:
-            y = utils.find_closest_hamming(seq, ref_dict, 1, frag_flag)
-            print ('Closest sister taxon found: {}'.format(y[0]))
-            print ('{} seconds finding closest leaf'.format(time.perf_counter() - t0))
             node_y = leaf_dict[y[0]]
             if subtree_flag == 'n':
                 labels = utils.subtree_nodes(tree, node_y, n)
@@ -111,7 +146,6 @@ def main(args):
 
         subtree = tree.extract_tree_with(labels)
 
-        subtree.deroot()
         utils.remove_edge_nbrs(subtree)
 
         subtree.write_tree_newick(tmp_tree, hide_rooted_prefix=True)
@@ -184,6 +218,18 @@ def main(args):
     output.close()
     print ('{} seconds building jplace'.format(time.perf_counter() - t0))
     shutil.rmtree("tmp{}".format(run))
+
+    
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
     
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -223,11 +269,11 @@ def parseArgs():
                         help="Path to query sequence alignment in fasta format (ref alignment separate)",
                         required=False, default="")
     
-    parser.add_argument("-f", "--fragmentflag", type=bool,
+    parser.add_argument("-f", "--fragmentflag", type=str2bool, 
                         help="boolean, True if queries contain fragments",
-                        required=False, default=False)
+                        required=False, default=True)
 
-    parser.add_argument("-v", "--version", action="version", version="2.0.0", help="show the version number and exit")
+    parser.add_argument("-v", "--version", action="version", version="2.0.1", help="show the version number and exit")
                        
     return parser.parse_args()
 
